@@ -58,27 +58,14 @@ export function ManualBookingDialog({ businessId, timeZone, date: initialDate, r
   const mutation = useMutation({
     mutationFn: async (input: { name: string; phone: string; startsAt: Date }) => {
       const supabase = createClient();
-      // Aynı telefonla kayıtlı müşteri varsa onu kullan; yoksa hesapsız müşteri kaydı aç.
-      let customerId: string | null = null;
-      if (input.phone) {
-        const { data: existing } = await supabase
-          .from("customers")
-          .select("id")
-          .eq("business_id", businessId)
-          .eq("phone", input.phone)
-          .limit(1)
-          .maybeSingle();
-        customerId = existing?.id ?? null;
-      }
-      if (!customerId) {
-        const { data, error } = await supabase
-          .from("customers")
-          .insert({ business_id: businessId, full_name: input.name, phone: input.phone || null })
-          .select("id")
-          .single();
-        if (error) throw error;
-        customerId = data.id;
-      }
+      // Aynı telefonla kayıtlı müşteri varsa o kullanılır, yoksa hesapsız müşteri açılır. Yetki ve kopya denetimi
+      // veritabanındadır (personel de ekleyebilir; yeni satırı geri okuması gerekmez).
+      const { data: customerId, error: customerError } = await supabase.rpc("create_walkin_customer", {
+        p_business_id: businessId,
+        p_full_name: input.name,
+        p_phone: input.phone || undefined,
+      });
+      if (customerError) throw customerError;
       const { error } = await supabase.rpc("create_appointment", {
         p_business_id: businessId,
         p_customer_id: customerId,

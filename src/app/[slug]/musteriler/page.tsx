@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Müşteriler" };
 
 export default async function CustomersPage({ params }: PageProps<"/[slug]/musteriler">) {
   const { slug } = await params;
-  const { business } = await loadBusiness(slug);
+  const { business, role } = await loadBusiness(slug);
   const supabase = await createClient();
   const { data: customers } = await supabase
     .from("customers")
@@ -18,6 +18,7 @@ export default async function CustomersPage({ params }: PageProps<"/[slug]/muste
   return (
     <CustomersView
       businessId={business.id}
+      canEdit={role === "owner"}
       timeZone={business.timezone}
       customers={(customers ?? []).map((c) => ({
         id: c.id,

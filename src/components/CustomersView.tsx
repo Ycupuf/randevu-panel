@@ -17,7 +17,7 @@ type Customer = {
   appointments: CustomerAppointment[];
 };
 
-export function CustomersView({ businessId, timeZone, customers }: { businessId: string; timeZone: string; customers: Customer[] }) {
+export function CustomersView({ businessId, timeZone, canEdit, customers }: { businessId: string; timeZone: string; canEdit: boolean; customers: Customer[] }) {
   const [query, setQuery] = useState("");
   const [onlyRisky, setOnlyRisky] = useState(false);
 
@@ -62,7 +62,8 @@ export function CustomersView({ businessId, timeZone, customers }: { businessId:
                 <div><dt className="text-muted">Son ziyaret</dt><dd className="font-semibold">{stats.lastVisit ? formatDateShort(stats.lastVisit, timeZone) : "–"}</dd></div>
               </dl>
             </div>
-            <NoteEditor businessId={businessId} customerId={c.id} initial={c.note} />
+            {/* Özel notlar yalnızca işletme sahibine açıktır (RLS); personel için editör gösterilmez */}
+            {canEdit && <NoteEditor businessId={businessId} customerId={c.id} initial={c.note} />}
           </li>
         ))}
         {rows.length === 0 && <li className="card text-muted">{customers.length ? "Aramaya uyan müşteri yok." : "Henüz müşteri yok. İlk randevuyla birlikte burada görünür."}</li>}
