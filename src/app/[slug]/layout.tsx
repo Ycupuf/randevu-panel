@@ -11,9 +11,10 @@ export default async function BusinessLayout({ children, params }: LayoutProps<"
 
   // Kurulum kontrolü: yayına almadan önce en az bir ekip üyesi, çalışma saati ve hizmet ataması gerekir.
   const supabase = await createClient();
-  const [{ data: resources }, { count: serviceCount }] = await Promise.all([
+  const [{ data: resources }, { count: serviceCount }, { data: unread }] = await Promise.all([
     supabase.from("resources").select("id, working_hours(id), resource_services(service_id)").eq("business_id", business.id).eq("active", true),
     supabase.from("services").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("active", true),
+    supabase.rpc("unread_notification_count", { p_business_id: business.id }),
   ]);
   const hasResource = (resources?.length ?? 0) > 0;
   const hasHours = (resources ?? []).some((r) => r.working_hours.length > 0);
@@ -49,7 +50,7 @@ export default async function BusinessLayout({ children, params }: LayoutProps<"
           </p>
         </div>
       )}
-      <BusinessNav slug={slug} />
+      <BusinessNav slug={slug} businessId={business.id} initialUnread={unread ?? 0} />
       <div className="mt-6">{children}</div>
     </div>
   );

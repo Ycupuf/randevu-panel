@@ -87,6 +87,25 @@ test.describe("demo işletme sahibi", () => {
     await expect(page.getByText("Gelmeme oranı")).toBeVisible();
   });
 
+  test("bildirimler sekmesi açılır ve filtreler çalışır", async ({ page }) => {
+    await page.goto("/demo-berber/bildirimler");
+    await expect(page.getByRole("heading", { name: "Bildirimler", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Tümünü okundu say" })).toBeVisible();
+    await page.getByRole("button", { name: "Yeni müşteri", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Yeni müşteri", exact: true })).toHaveAttribute("aria-pressed", "true");
+    // Sekme menüsünde de görünür
+    await expect(page.getByRole("navigation", { name: "İşletme bölümleri" }).getByRole("link", { name: /Bildirimler/ })).toBeVisible();
+  });
+
+  test("takvim ?tarih= bağlantısıyla istenen günü açar", async ({ page }) => {
+    await page.goto("/demo-berber/takvim?tarih=2026-12-01");
+    await expect(page.getByRole("heading", { name: "1 Aralık 2026 Salı" })).toBeVisible();
+    await expect(page.getByLabel("Tarih")).toHaveValue("2026-12-01");
+    // Geçersiz değer bugüne düşer, hata vermez
+    await page.goto("/demo-berber/takvim?tarih=kotu");
+    await expect(page.getByRole("button", { name: "Randevu ekle" })).toBeVisible();
+  });
+
   test("çıkış yapınca panel kapanır", async ({ page }) => {
     await page.getByRole("button", { name: "Çıkış" }).click();
     await expect(page).toHaveURL(/\/giris/);

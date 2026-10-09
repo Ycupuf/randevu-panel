@@ -22,6 +22,7 @@ Tüm projeyi tanıtan sayfa: <https://randevu-web-delta.vercel.app/proje>
 | Bölüm | Ne yapar |
 |---|---|
 | **Takvim** | Gün görünümü, ekip üyesi başına sütun, 30 sn'de bir yenilenir. Randevuyu onayla/reddet, tamamlandı/gelmedi işaretle, saatini değiştir, iptal et. Telefonla gelen randevuyu elle ekle. |
+| **Bildirimler** | Müşteri sitesinden gelen yeni randevu, müşteri iptali, saat/kişi değişikliği ve **yeni müşteri kaydı**. Her bildirimde müşteri bilgisi (ad, telefon, e-posta), hizmet, zaman, kişi, not ve ilgili sayfaya bağlantı; sekmede okunmamış rozeti (30 sn'de bir yenilenir), türe göre filtre, "tümünü okundu say". Sahip hepsini, personel yalnızca kendi kaynağını ilgilendirenleri görür (RLS). |
 | **Müşteriler** | Ad, telefon (`0532`/`+90` farkı gözetmez) ve e-posta ile arama (Türkçe karakterden bağımsız), randevu/gelmedi/son ziyaret sayıları, yalnızca ekibin gördüğü özel not. |
 | **Hizmetler** | Süre, hazırlık payı, fiyat; araç tipi gibi seçenekler (süre ve fiyatı seçeneğe göre değişir); pasif yapma. |
 | **Ekip ve saatler** | Ekip üyeleri/alanlar, yaptıkları hizmetler, haftalık çalışma saatleri (mola için bölünmüş aralıklar), izin ve resmi tatil. |
@@ -79,6 +80,6 @@ Demo girişi için `.env.local` içine `NEXT_PUBLIC_DEMO_LOGIN=1` ve `DEMO_OWNER
 ## Bilinen eksikler
 
 - Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)); canlı gönderim Resend anahtarı bekliyor. İşletmeye de yeni randevu, müşteri iptali ve müşteri saat değişikliği için e-posta gider.
-- Hafta/ay görünümü yok; takvim gün görünümüdür.
+- Hafta/ay görünümü yok; takvim gün görünümüdür. Bildirimler uygulama içindedir; tarayıcı/telefon push bildirimi yok.
 - Personel rolü salt okunur ve yalnızca kendi kaynağının randevusunu görür; davet akışı henüz yok (üyelik veritabanından eklenir).
 - Captcha ve CSP yok.

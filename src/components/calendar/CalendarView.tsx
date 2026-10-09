@@ -14,15 +14,18 @@ import { STATUS_CLASS, STATUS_LABEL, type CalendarAppointment, type ResourceLite
 type Props = {
   businessId: string;
   timeZone: string;
+  today: string;
   initialDate: string;
   resourceLabel: string;
   resources: ResourceLite[];
   services: ServiceLite[];
 };
 
-export function CalendarView({ businessId, timeZone, initialDate, resourceLabel, resources, services }: Props) {
-  const { date: storedDate, selectedId, setDate, select, manualOpen, setManualOpen } = useCalendarUi();
-  const date = storedDate ?? initialDate;
+export function CalendarView({ businessId, timeZone, today, initialDate, resourceLabel, resources, services }: Props) {
+  const { date: storedDate, base, selectedId, setDate: storeDate, select, manualOpen, setManualOpen } = useCalendarUi();
+  // Kullanıcının seçtiği gün yalnızca aynı başlangıç gününe aitse geçerlidir; ?tarih= ile başka gün istenirse o gün gösterilir.
+  const date = storedDate && base === initialDate ? storedDate : initialDate;
+  const setDate = (d: string) => storeDate(d, initialDate);
 
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["appointments", businessId, date],
@@ -65,7 +68,7 @@ export function CalendarView({ businessId, timeZone, initialDate, resourceLabel,
           onChange={(e) => e.target.value && setDate(e.target.value)}
         />
         <button type="button" className="btn" onClick={() => setDate(addDays(date, 1))} aria-label="Sonraki gün">→</button>
-        <button type="button" className="btn" onClick={() => setDate(initialDate)}>Bugün</button>
+        <button type="button" className="btn" onClick={() => setDate(today)}>Bugün</button>
         <button type="button" className="btn btn-primary ml-auto" onClick={() => setManualOpen(true)} disabled={!resources.length || !services.length}>
           Randevu ekle
         </button>
