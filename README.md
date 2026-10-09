@@ -78,7 +78,7 @@ Demo girişi için `.env.local` içine `NEXT_PUBLIC_DEMO_LOGIN=1` ve `DEMO_OWNER
 
 ## Bilinen eksikler
 
-- Onay/hatırlatma e-postası yok (Supabase varsayılan e-postası yalnızca giriş bağlantısı içindir; gerçek kullanım için özel SMTP gerekir).
+- Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-onay-iptal-saat-değişikliği-24-saat-hatırlatma)); canlı gönderim Resend anahtarı bekliyor. İşletmeye "yeni randevu" e-postası yok.
 - Hafta/ay görünümü yok; takvim gün görünümüdür.
 - Personel rolü salt okunur ve yalnızca kendi kaynağının randevusunu görür; davet akışı henüz yok (üyelik veritabanından eklenir).
 - Captcha ve CSP yok.
