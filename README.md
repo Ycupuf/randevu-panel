@@ -8,7 +8,7 @@ Müşterilerin randevu aldığı site ayrı bir depodadır: **[randevu-web](http
 
 ## Canlıda dene
 
-1. Panel: **<https://randevu-panel.vercel.app>** (adres farklıysa depo sayfasındaki "Website" bağlantısı)
+1. Panel: **<https://randevu-panel-psi.vercel.app>**
 2. **"Demo hesabıyla devam et"** düğmesine bas. E-posta gerekmez; üç örnek işletme (kuaför, güzellik, oto yıkama) hazır gelir.
 3. Takvimde bekleyen bir randevuyu **onayla**, ya da **Randevu ekle** ile telefonla gelen bir müşteriyi gir. Aynı kişiye aynı saati ikinci kez vermeyi dene: veritabanı reddeder.
 4. Müşteri tarafını görmek için işletme kartındaki **Müşteri sayfası** bağlantısına git; orada alınan randevu panelde görünür.
