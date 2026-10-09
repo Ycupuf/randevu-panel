@@ -13,7 +13,9 @@ Müşterilerin randevu aldığı site ayrı bir depodadır: **[randevu-web](http
 3. Takvimde bekleyen bir randevuyu **onayla**, ya da **Randevu ekle** ile telefonla gelen bir müşteriyi gir. Aynı kişiye aynı saati ikinci kez vermeyi dene: veritabanı reddeder.
 4. Müşteri tarafını görmek için işletme kartındaki **Müşteri sayfası** bağlantısına git; orada alınan randevu panelde görünür.
 
-Demo hesabı herkesle paylaşılır ve her demo girişinde örnek verilerle sıfırlanır.
+Demo hesabı herkesle paylaşılır. Her demo girişinde işletmeler tohum haline döner: örnek randevular, yayın durumu, hizmetler, ekip ve çalışma saatleri geri gelir. Hesaplı müşterinin (örn. müşteri sitesindeki demo hesabının) aldığı randevuya dokunulmaz. Demo işletmeleri silinemez.
+
+Tüm projeyi tanıtan sayfa: <https://randevu-web-delta.vercel.app/proje>
 
 ## Özellikler
 
