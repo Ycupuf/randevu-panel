@@ -78,7 +78,7 @@ Demo girişi için `.env.local` içine `NEXT_PUBLIC_DEMO_LOGIN=1` ve `DEMO_OWNER
 
 ## Bilinen eksikler
 
-- Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)); canlı gönderim Resend anahtarı bekliyor. İşletmeye de yeni randevu ve müşteri iptali için e-posta gider.
+- Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)); canlı gönderim Resend anahtarı bekliyor. İşletmeye de yeni randevu, müşteri iptali ve müşteri saat değişikliği için e-posta gider.
 - Hafta/ay görünümü yok; takvim gün görünümüdür.
 - Personel rolü salt okunur ve yalnızca kendi kaynağının randevusunu görür; davet akışı henüz yok (üyelik veritabanından eklenir).
 - Captcha ve CSP yok.
