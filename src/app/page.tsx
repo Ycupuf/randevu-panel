@@ -5,9 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 
 export default async function HomePage() {
-  await requireUser("/");
+  const user = await requireUser("/");
   const supabase = await createClient();
-  const { data: businesses } = await supabase.from("businesses").select("id, name, slug, sector, published, city").order("created_at");
+  // RLS yayındaki HER işletmenin okunmasına izin verir (müşteri sitesi için); panel yalnızca ÜYESİ olduğun işletmeleri listeler.
+  const { data: businesses } = await supabase
+    .from("businesses")
+    .select("id, name, slug, sector, published, city, business_members!inner(user_id)")
+    .eq("business_members.user_id", user.id)
+    .order("created_at");
 
   return (
     <div>

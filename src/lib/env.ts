@@ -5,7 +5,6 @@ import { z } from "zod";
 const schema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url("NEXT_PUBLIC_SUPABASE_URL geçerli bir adres olmalı"),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(20, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY eksik"),
-  NEXT_PUBLIC_SITE_URL: z.url().default("http://localhost:3001"),
   // Müşterilerin randevu aldığı site (randevu-web). İşletme paneli paylaşım bağlantılarını buradan üretir.
   NEXT_PUBLIC_CUSTOMER_URL: z.url().default("http://localhost:3000"),
   // "1" ise "Demo hesabıyla devam et" düğmesi görünür (şifre sunucuda: DEMO_OWNER_EMAIL/PASSWORD).
@@ -18,7 +17,6 @@ const schema = z.object({
 const parsed = schema.safeParse({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || undefined,
   NEXT_PUBLIC_CUSTOMER_URL: process.env.NEXT_PUBLIC_CUSTOMER_URL || undefined,
   NEXT_PUBLIC_DEMO_LOGIN: process.env.NEXT_PUBLIC_DEMO_LOGIN,
 });

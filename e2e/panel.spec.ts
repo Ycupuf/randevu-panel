@@ -4,6 +4,19 @@ import { expect, test } from "@playwright/test";
 // bu testler kendini atlar (örn. CI'da gizli değişken verilmediğinde).
 const demoEnabled = process.env.NEXT_PUBLIC_DEMO_LOGIN === "1" && Boolean(process.env.DEMO_OWNER_PASSWORD);
 
+// Testler hafta gününe bağlı olmamalı: demo kuaför Pazar kapalıdır ve sıfırlama Pazar'a düşen örnek randevuları
+// Pazartesi'ye kaydırır. Bu yüzden gün sabit "bugün" değil, açık bir gün olarak seçilir.
+const istanbulDate = (offsetDays: number) =>
+  new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Istanbul" }).format(new Date(Date.now() + offsetDays * 86_400_000));
+const nextOpenDay = (minOffset: number) => {
+  for (let i = minOffset; i < minOffset + 7; i++) {
+    const day = istanbulDate(i);
+    const weekday = new Date(`${day}T12:00:00Z`).getUTCDay();
+    if (weekday >= 1 && weekday <= 6) return day; // Pazartesi-Cumartesi
+  }
+  return istanbulDate(minOffset);
+};
+
 test.describe("giriş", () => {
   test("giriş yapmamış kullanıcı panelden giriş sayfasına yönlenir", async ({ page }) => {
     await page.goto("/demo-berber/takvim");
@@ -41,8 +54,14 @@ test.describe("demo işletme sahibi", () => {
   });
 
   test("takvimde randevuyu onaylar", async ({ page }) => {
-    await page.goto("/demo-berber/takvim");
+    // Onay bekleyen örnek randevu olan ilk günü bul (bugünden başlayıp 4 gün)
     const pending = page.getByRole("button", { name: /Onay bekliyor/ }).first();
+    let found = false;
+    for (let i = 0; i < 4 && !found; i++) {
+      await page.goto(`/demo-berber/takvim?tarih=${istanbulDate(i)}`);
+      await page.locator('[aria-busy="false"]').waitFor();
+      found = (await pending.count()) > 0;
+    }
     await expect(pending).toBeVisible();
     await pending.click();
     const dialog = page.getByRole("dialog", { name: "Randevu ayrıntısı" });
@@ -52,7 +71,7 @@ test.describe("demo işletme sahibi", () => {
   });
 
   test("elle randevu ekler ve çakışan saati reddeder", async ({ page }) => {
-    await page.goto("/demo-berber/takvim");
+    await page.goto(`/demo-berber/takvim?tarih=${nextOpenDay(2)}`);
     const add = async (name: string) => {
       await page.getByRole("button", { name: "Randevu ekle" }).click();
       const dialog = page.getByRole("dialog", { name: "Randevu ekle" });
@@ -101,9 +120,11 @@ test.describe("demo işletme sahibi", () => {
     await page.goto("/demo-berber/takvim?tarih=2026-12-01");
     await expect(page.getByRole("heading", { name: "1 Aralık 2026 Salı" })).toBeVisible();
     await expect(page.getByLabel("Tarih")).toHaveValue("2026-12-01");
-    // Geçersiz değer bugüne düşer, hata vermez
-    await page.goto("/demo-berber/takvim?tarih=kotu");
-    await expect(page.getByRole("button", { name: "Randevu ekle" })).toBeVisible();
+    // Geçersiz ya da var olmayan gün bugüne düşer, sayfa çökmez
+    for (const bad of ["kotu", "2026-02-30", "2026-13-01", "0000-00-00"]) {
+      await page.goto(`/demo-berber/takvim?tarih=${bad}`);
+      await expect(page.getByRole("button", { name: "Randevu ekle" })).toBeVisible();
+    }
   });
 
   test("çıkış yapınca panel kapanır", async ({ page }) => {

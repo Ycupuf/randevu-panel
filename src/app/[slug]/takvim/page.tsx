@@ -3,7 +3,7 @@ import { CalendarView } from "@/components/calendar/CalendarView";
 import { now } from "@/lib/clock";
 import { loadBusiness } from "@/lib/panel";
 import { createClient } from "@/lib/supabase/server";
-import { localDateString } from "@/lib/time";
+import { isValidDateString, localDateString } from "@/lib/time";
 
 export const metadata: Metadata = { title: "Takvim" };
 
@@ -14,9 +14,9 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
   const today = localDateString(now(), business.timezone);
   // Bildirimlerden gelen bağlantı: /takvim?tarih=2026-10-13 (geçersizse bugün)
   const tarih = typeof query.tarih === "string" ? query.tarih : "";
-  const requested = /^\d{4}-\d{2}-\d{2}$/.test(tarih) && !Number.isNaN(Date.parse(tarih)) ? tarih : today;
+  const requested = isValidDateString(tarih) ? tarih : today;
   const supabase = await createClient();
-  const [{ data: resources }, { data: services }] = await Promise.all([
+  const [{ data: resources }, { data: services }, { data: fields }] = await Promise.all([
     supabase.from("resources").select("id, name, kind").eq("business_id", business.id).eq("active", true).order("sort"),
     supabase
       .from("services")
@@ -24,6 +24,7 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
       .eq("business_id", business.id)
       .eq("active", true)
       .order("sort"),
+    supabase.from("booking_fields").select("key, label").eq("business_id", business.id),
   ]);
 
   return (
@@ -33,6 +34,7 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
       today={today}
       initialDate={requested}
       resourceLabel={settings.resource_label}
+      fieldLabels={Object.fromEntries((fields ?? []).map((f) => [f.key, f.label]))}
       resources={resources ?? []}
       services={(services ?? []).map((s) => ({
         ...s,

@@ -17,11 +17,12 @@ type Props = {
   today: string;
   initialDate: string;
   resourceLabel: string;
+  fieldLabels: Record<string, string>;
   resources: ResourceLite[];
   services: ServiceLite[];
 };
 
-export function CalendarView({ businessId, timeZone, today, initialDate, resourceLabel, resources, services }: Props) {
+export function CalendarView({ businessId, timeZone, today, initialDate, resourceLabel, fieldLabels, resources, services }: Props) {
   const { date: storedDate, base, selectedId, setDate: storeDate, select, manualOpen, setManualOpen } = useCalendarUi();
   // Kullanıcının seçtiği gün yalnızca aynı başlangıç gününe aitse geçerlidir; ?tarih= ile başka gün istenirse o gün gösterilir.
   const date = storedDate && base === initialDate ? storedDate : initialDate;
@@ -152,6 +153,7 @@ export function CalendarView({ businessId, timeZone, today, initialDate, resourc
           appointment={selected}
           timeZone={timeZone}
           resources={resources}
+          fieldLabels={fieldLabels}
           onClose={() => select(null)}
         />
       )}

@@ -87,7 +87,8 @@ body {
     @apply hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
   }
   .chip[aria-pressed="true"],
-  .chip[aria-checked="true"] {
+  .chip[aria-checked="true"],
+  .chip[aria-current="page"] {
     @apply border-accent bg-accent-soft font-medium;
   }
   .chip:disabled {

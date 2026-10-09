@@ -45,7 +45,7 @@ Tarayıcı ──► Next.js 16 (App Router, Vercel)
                 └─ Yazma yalnızca RPC fonksiyonlarıyla (create/reschedule/cancel_appointment, set_appointment_status)
 ```
 
-**Neden böyle?** İş kuralları (çakışma, durum geçişleri, çalışma saati) uygulama kodunda değil **veritabanında** zorlanır; iki uygulama aynı kuralları paylaşır ve eşzamanlı isteklerde bile çifte rezervasyon olmaz. Panel RLS sayesinde başka işletmenin varlığını bile göremez (bulunamadı döner).
+**Neden böyle?** İş kuralları (çakışma, durum geçişleri, çalışma saati) uygulama kodunda değil **veritabanında** zorlanır; iki uygulama aynı kuralları paylaşır ve eşzamanlı isteklerde bile çifte rezervasyon olmaz. Panel yalnızca üyesi olduğun işletmeleri listeler; başkasının işletmesinin panel adresi RLS sayesinde "bulunamadı" döner. Müşteri, randevu ve not gibi özel veriler başka işletmeye sızmaz (yayındaki işletmenin herkese açık kataloğu müşteri sitesi için okunabilir).
 
 Şema ve migration dosyaları [randevu-web/supabase/migrations](https://github.com/Ycupuf/randevu-web/tree/main/supabase/migrations) içindedir.
 
@@ -81,5 +81,5 @@ Demo girişi için `.env.local` içine `NEXT_PUBLIC_DEMO_LOGIN=1` ve `DEMO_OWNER
 
 - Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)); canlı gönderim Resend anahtarı bekliyor. İşletmeye de yeni randevu, müşteri iptali ve müşteri saat değişikliği için e-posta gider.
 - Hafta/ay görünümü yok; takvim gün görünümüdür. Bildirimler uygulama içindedir; tarayıcı/telefon push bildirimi yok.
-- Personel rolü salt okunur ve yalnızca kendi kaynağının randevusunu görür; davet akışı henüz yok (üyelik veritabanından eklenir).
+- Personel yapılandırmayı (hizmet, ekip, ayar) değiştiremez; kendi kaynağının randevularını yönetir (onay, iptal, taşıma, elle randevu) ve yalnızca o randevulardaki müşterileri görür, müşteri notlarını göremez ve müşteri silemez. Personel davet akışı yok: üyelik ve kaynak bağlama veritabanından yapılır.
 - Captcha ve CSP yok.

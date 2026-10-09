@@ -25,18 +25,26 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/[
   const to = zonedInstant(addDays(toDate, 1), "00:00", tz);
 
   const supabase = await createClient();
-  const [{ data: appointments }, { data: resources }] = await Promise.all([
-    supabase
+  // Supabase API tek istekte en fazla 1000 satır döndürür; 90 günlük rapor sessizce kesilmesin diye sayfalanır.
+  const PAGE = 1000;
+  const appointments: Parameters<typeof buildReport>[0] = [];
+  for (let page = 0; page < 20; page++) {
+    const { data } = await supabase
       .from("appointments")
       .select("status, starts_at, resource_id, appointment_items(name, price_cents)")
       .eq("business_id", business.id)
       .gte("starts_at", from.toISOString())
       .lt("starts_at", to.toISOString())
-      .limit(5000),
-    supabase.from("resources").select("id, name").eq("business_id", business.id),
-  ]);
+      .order("starts_at")
+      .order("id")
+      .range(page * PAGE, page * PAGE + PAGE - 1);
+    if (!data) break;
+    appointments.push(...data);
+    if (data.length < PAGE) break;
+  }
+  const { data: resources } = await supabase.from("resources").select("id, name").eq("business_id", business.id);
 
-  const report = buildReport(appointments ?? [], {
+  const report = buildReport(appointments, {
     timeZone: tz,
     toDate,
     days,
@@ -62,7 +70,7 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/[
         </div>
         <nav aria-label="Rapor aralığı" className="flex gap-2">
           {RANGES.map((d) => (
-            <Link key={d} href={`/${slug}/rapor?gun=${d}`} className="chip inline-flex items-center" aria-pressed={d === days} scroll={false}>
+            <Link key={d} href={`/${slug}/rapor?gun=${d}`} className="chip inline-flex items-center" aria-current={d === days ? "page" : undefined} scroll={false}>
               {d} gün
             </Link>
           ))}

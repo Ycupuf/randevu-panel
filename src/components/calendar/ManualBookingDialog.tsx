@@ -6,17 +6,26 @@ import { z } from "zod";
 import { translateDbError } from "@/lib/errors";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { createClient } from "@/lib/supabase/browser";
+import { normalizePhoneTR } from "@/lib/phone";
 import { zonedInstant } from "@/lib/time";
 import { Modal } from "./Modal";
 import type { ResourceLite, ServiceLite } from "./types";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Müşteri adı en az 2 karakter olmalı").max(80),
+  // Boş olabilir; doluysa geçerli bir cep telefonu olmalı ve "+90..." biçimine çevrilir (müşteri sitesiyle aynı biçim)
   phone: z
     .string()
     .trim()
-    .regex(/^[0-9 +()-]{10,20}$/, "Telefon numarasını kontrol et")
-    .or(z.literal("")),
+    .transform((v, ctx) => {
+      if (v === "") return "";
+      const normalized = normalizePhoneTR(v);
+      if (normalized === null) {
+        ctx.addIssue({ code: "custom", message: "Geçerli bir cep telefonu gir (örn. 0532 123 45 67)" });
+        return z.NEVER;
+      }
+      return normalized;
+    }),
   time: z.string().regex(/^\d{2}:\d{2}$/, "Saat seç"),
 });
 

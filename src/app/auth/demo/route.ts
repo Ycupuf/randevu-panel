@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isSameOrigin } from "@/lib/origin";
 import { createClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/redirect";
 
@@ -6,6 +7,8 @@ import { safeNext } from "@/lib/redirect";
 // Şifre yalnızca sunucu ortam değişkenlerinden okunur, tarayıcıya hiç gitmez. Ortak hesap her girişte
 // sıfırlanır ve örnek randevularla yeniden doldurulur (reset_demo_owner). Değişkenler tanımlı değilse kapalıdır.
 export async function POST(request: NextRequest) {
+  // Başka bir sitenin gizli formuyla tetiklenemez (login CSRF)
+  if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
   const { origin } = request.nextUrl;
   const form = await request.formData().catch(() => null);
   const next = safeNext(typeof form?.get("next") === "string" ? (form?.get("next") as string) : null, "/");

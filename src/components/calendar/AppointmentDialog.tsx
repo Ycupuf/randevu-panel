@@ -14,6 +14,7 @@ type Props = {
   appointment: CalendarAppointment;
   timeZone: string;
   resources: ResourceLite[];
+  fieldLabels: Record<string, string>;
   onClose: () => void;
 };
 
@@ -32,7 +33,7 @@ const TRANSITIONS: Record<Status, { to: Status; label: string; danger?: boolean;
   no_show: [],
 };
 
-export function AppointmentDialog({ appointment: a, timeZone, resources, onClose }: Props) {
+export function AppointmentDialog({ appointment: a, timeZone, resources, fieldLabels, onClose }: Props) {
   const queryClient = useQueryClient();
   const [rescheduling, setRescheduling] = useState(false);
   const [date, setDate] = useState(() => localDateString(new Date(a.starts_at), timeZone));
@@ -121,7 +122,7 @@ export function AppointmentDialog({ appointment: a, timeZone, resources, onClose
         </div>
         {answers.map(([k, v]) => (
           <div key={k}>
-            <dt className="text-muted">{k}</dt>
+            <dt className="text-muted">{fieldLabels[k] ?? k}</dt>
             <dd>{String(v)}</dd>
           </div>
         ))}

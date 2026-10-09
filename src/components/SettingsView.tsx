@@ -215,9 +215,8 @@ function RulesSection({ settings, canEdit, run }: { settings: Settings; canEdit:
         </div>
         <div>
           <label htmlFor="rl-sel" className="label">Kişi / alan seçimi</label>
-          <select id="rl-sel" className="input" value={s.resource_selection} disabled={!canEdit} onChange={(e) => setS((x) => ({ ...x, resource_selection: e.target.value as Settings["resource_selection"] }))}>
-            <option value="customer">Müşteri seçer</option>
-            <option value="any">Müşteri seçer ya da &quot;fark etmez&quot; der</option>
+          <select id="rl-sel" className="input" value={s.resource_selection === "any" ? "customer" : s.resource_selection} disabled={!canEdit} onChange={(e) => setS((x) => ({ ...x, resource_selection: e.target.value as Settings["resource_selection"] }))}>
+            <option value="customer">Müşteri seçer (&quot;fark etmez&quot; seçeneği dahil)</option>
             <option value="auto">Otomatik atanır (örn. oto yıkama)</option>
           </select>
         </div>
@@ -274,7 +273,7 @@ function FieldsSection({ businessId, fields, canEdit, run }: { businessId: strin
       setError("Soru 2-80 karakter olmalı");
       return;
     }
-    const base = trimmed.toLowerCase().replace(/[ıİ]/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 30) || "alan";
+    const base = trimmed.replace(/İ/g, "I").replace(/ı/g, "i").toLowerCase().replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 30) || "alan";
     let key = base;
     for (let n = 2; fields.some((f) => f.key === key); n++) key = `${base}_${n}`;
     setError(null);

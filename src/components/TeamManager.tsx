@@ -108,11 +108,8 @@ function ResourceCard({ resource: r, services, canEdit, run }: { resource: Resou
       return;
     }
     setHoursError(null);
-    const supabase = createClient();
-    const ok = await run(() => supabase.from("working_hours").delete().eq("resource_id", r.id));
-    if (!ok) return;
-    const rows = weekToRows(week).map((row) => ({ ...row, resource_id: r.id }));
-    if (rows.length) await run(() => supabase.from("working_hours").insert(rows));
+    // Tek işlemde değiştirilir: hata olursa eski saatler korunur (silip-ekleme yarım kalmaz).
+    await run(() => createClient().rpc("replace_working_hours", { p_resource_id: r.id, p_rows: weekToRows(week) }));
   }
 
   function setInterval(weekday: number, index: number, field: "start" | "end", value: string) {
