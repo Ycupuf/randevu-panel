@@ -79,7 +79,8 @@ Demo girişi için `.env.local` içine `NEXT_PUBLIC_DEMO_LOGIN=1` ve `DEMO_OWNER
 
 ## Bilinen eksikler
 
-- Müşteriye gidecek onay/iptal/hatırlatma e-postası altyapısı hazır ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)); canlı gönderim Resend anahtarı bekliyor. İşletmeye de yeni randevu, müşteri iptali ve müşteri saat değişikliği için e-posta gider.
+- E-posta hattı canlı ([randevu-web](https://github.com/Ycupuf/randevu-web#e-posta-müşteriye-ve-işletmeye)) ama alan adı doğrulanmadığı için Resend yalnızca hesap sahibinin adresine gönderir. İşletmeye de yeni randevu, müşteri iptali ve müşteri saat değişikliği için e-posta gider.
 - Hafta/ay görünümü yok; takvim gün görünümüdür. Bildirimler uygulama içindedir; tarayıcı/telefon push bildirimi yok.
 - Personel yapılandırmayı (hizmet, ekip, ayar) değiştiremez; kendi kaynağının randevularını yönetir (onay, iptal, taşıma, elle randevu) ve yalnızca o randevulardaki müşterileri görür, müşteri notlarını göremez ve müşteri silemez. Personel davet akışı yok: üyelik ve kaynak bağlama veritabanından yapılır.
 - Captcha ve CSP yok.
+- Oturum çerezi `Secure` ve `SameSite=Lax` ama `HttpOnly` değil: panel verileri tarayıcıdan doğrudan Supabase'e yazar, bu yüzden tarayıcı istemcisi oturumu okuyabilmelidir. `HttpOnly` için tüm yazma işlerinin sunucu eylemlerine taşınması gerekir (müşteri sitesinde çerez `HttpOnly`'dir).
