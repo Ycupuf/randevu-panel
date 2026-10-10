@@ -24,6 +24,11 @@ test.describe("giriş", () => {
     await expect(page.getByRole("heading", { name: "İşletme paneline giriş" })).toBeVisible();
   });
 
+  test("giriş yapmamış kullanıcı alt sayfa yolunu ve sorgusunu kaybetmez", async ({ page }) => {
+    await page.goto("/demo-berber/bildirimler?filtre=okunmamis");
+    await expect(page).toHaveURL(/\/giris\?next=%2Fdemo-berber%2Fbildirimler%3Ffiltre%3Dokunmamis/);
+  });
+
   test("geçersiz e-posta uyarısı gösterir", async ({ page }) => {
     await page.goto("/giris");
     await page.getByLabel("E-posta").fill("bu-bir-eposta-degil");

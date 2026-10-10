@@ -29,8 +29,17 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // Oturumu başlatır/yeniler; sonuç burada kullanılmıyor.
-  await supabase.auth.getClaims();
+  // Oturumu yeniler. Oturum yoksa kullanıcıyı, gitmek istediği tam yolla (sorgu dahil) girişe yollar:
+  // sayfaların kendi `requireUser` denetimi yol bilmediği için dönüş adresini yalnızca burada doğru yazabiliriz.
+  const { data } = await supabase.auth.getClaims();
+  const { pathname, search } = request.nextUrl;
+  const isPublic = pathname === "/giris" || pathname.startsWith("/auth/");
+  if (!data?.claims?.sub && !isPublic) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/giris";
+    url.search = `?next=${encodeURIComponent(pathname + search)}`;
+    return NextResponse.redirect(url);
+  }
   return response;
 }
 
