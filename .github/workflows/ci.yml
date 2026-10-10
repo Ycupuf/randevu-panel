@@ -35,6 +35,10 @@ jobs:
       - run: npm ci
 
       # `typecheck` önce Next'in yol tiplerini üretir (next typegen), sonra TypeScript'i çalıştırır.
+      # Web deposundan kopyalanan dosyalar sapmış mı? (bkz. scripts/check-shared.mjs)
+      - name: Paylaşılan dosya kontrolü
+        run: npm run check:shared
+
       - name: Tip kontrolü
         run: npm run typecheck
 

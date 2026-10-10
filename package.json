@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run --passWithNoTests",
     "typecheck": "next typegen && tsc --noEmit",
+    "check:shared": "node scripts/check-shared.mjs",
     "e2e": "playwright test"
   },
   "dependencies": {
